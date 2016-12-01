@@ -39,6 +39,19 @@ class UsersController < ApplicationController
     @user.destroy
   end
 
+  def login
+    @user = User.find_by(email: user_params[:email])
+    if @user
+      if @user.authenticate(user_params[:password])
+        render json: @user
+      else
+        render json: { Error: "Incorrect Password" }
+      end
+    else
+      render json: { Error: "Unrecognized user" }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user

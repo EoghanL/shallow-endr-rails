@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   get '/login', to: 'sessions#new'
-  post '/login', to: 'sessions#create'
+  post '/users/login', to: 'users#login'
   resources :songs
   resources :artists
   resources :users
