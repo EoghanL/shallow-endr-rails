@@ -43,7 +43,8 @@ class UsersController < ApplicationController
     @user = User.find_by(email: user_params[:email])
     if @user
       if @user.authenticate(user_params[:password])
-        render json: @user
+        jwt_token = Auth.issue({user_id: @user.id})
+        render json: {jwt: jwt_token}
       else
         render json: { Error: "Incorrect Password" }
       end
