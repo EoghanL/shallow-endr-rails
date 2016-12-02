@@ -1,5 +1,13 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :update, :destroy]
+  #@wrapper = Discogs::Wrapper.new("ShallowEndr")
+
+  def authenticate
+    url = 'https://api.discogs.com/database/search?q=Led+Zeppelin&key=ODInJpHETozDAMYQkyne&secret=IZTYUrGmbEkmAXXqfgVwDOxRTHojEdzD'
+    response = HTTParty.get(url)
+    response.parsed_response
+    byebug
+  end
 
   # GET /users
   def index
@@ -16,7 +24,7 @@ class UsersController < ApplicationController
   # POST /users
   def create
     @user = User.new(user_params)
-    byebug
+
     if @user.save
       render json: @user, status: :created, location: @user
     else
@@ -39,6 +47,7 @@ class UsersController < ApplicationController
   end
 
   def login
+    byebug
     @user = User.find_by(email: user_params[:email])
     if @user
       if @user.authenticate(user_params[:password])
