@@ -46,10 +46,10 @@ class UsersController < ApplicationController
         jwt_token = Auth.issue({user_id: @user.id})
         render json: {jwt: jwt_token}
       else
-        render json: { Error: "Incorrect Password" }
+        render json: { errors: "Incorrect Password"}
       end
     else
-      render json: { Error: "Unrecognized user" }
+      render json: { errors: "Unrecognized user" }
     end
   end
 
