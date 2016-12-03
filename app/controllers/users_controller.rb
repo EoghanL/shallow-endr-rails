@@ -52,7 +52,7 @@ class UsersController < ApplicationController
     if @user
       if @user.authenticate(user_params[:password])
         jwt_token = Auth.issue({user_id: @user.id})
-        render json: {jwt: jwt_token}
+        render json: { user_id: @user.id, jwt: jwt_token }
       else
         render json: { errors: "Incorrect Password"}
       end
