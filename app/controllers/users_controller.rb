@@ -2,10 +2,30 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :update, :destroy]
   #@wrapper = Discogs::Wrapper.new("ShallowEndr")
 
+  #for musicbrainz to get albums: https://musicbrainz.org/ws/2/artist/f181961b-20f7-459e-89de-920ef03c7ed0?inc=release-groups
+  #find type="Album"
+  MusicBrainz.configure do |c|
+    # Application identity (required)
+    c.app_name = "ShallowEndr"
+    c.app_version = "1.0"
+    c.contact = "marc@beldgroup.com"
+
+    # Cache config (optional)
+    c.cache_path = "/tmp/musicbrainz-cache"
+    c.perform_caching = true
+
+    # Querying config (optional)
+    c.query_interval = 1.2 # seconds
+    c.tries_limit = 2
+  end
+
+
   def authenticate
-    url = 'https://api.discogs.com/database/search?q=Led+Zeppelin&key=ODInJpHETozDAMYQkyne&secret=IZTYUrGmbEkmAXXqfgVwDOxRTHojEdzD'
-    response = HTTParty.get(url)
-    response.parsed_response
+    #url = 'https://api.discogs.com/database/search?q=Led+Zeppelin&key=ODInJpHETozDAMYQkyne&secret=IZTYUrGmbEkmAXXqfgVwDOxRTHojEdzD'
+    # url = 'https://musicbrainz.org/ws/2/release-group?artist=f181961b-20f7-459e-89de-920ef03c7ed0&fmt=json'
+    # response = HTTParty.get(url)
+    # byebug
+    # response = response.parsed_response
     byebug
   end
 
