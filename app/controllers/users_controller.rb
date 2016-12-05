@@ -21,11 +21,18 @@ class UsersController < ApplicationController
 
 
   def authenticate
-    #url = 'https://api.discogs.com/database/search?q=Led+Zeppelin&key=ODInJpHETozDAMYQkyne&secret=IZTYUrGmbEkmAXXqfgVwDOxRTHojEdzD'
-    # url = 'https://musicbrainz.org/ws/2/release-group?artist=f181961b-20f7-459e-89de-920ef03c7ed0&fmt=json'
-    # response = HTTParty.get(url)
-    # byebug
-    # response = response.parsed_response
+    searchTerm = 'The Strokes'
+    # this is where we would search and let them pick the correct result
+    artistId = "f181961b-20f7-459e-89de-920ef03c7ed0"
+    @artist = MusicBrainz::Artist.find(artistId)
+    @albums = []
+    @artist.release_groups.each_with_index { |rel_group,ind|
+      if (rel_group.type == "Album")
+        @songs = @artist.release_groups[ind].releases.first.tracks
+        @albums.push({name: rel_group.title, id: rel_group.id, songs: @songs})
+      end
+    }
+    #@albums is an array of hashes, with keys for title, id and songs (points to an array of MB Recordings)
     byebug
   end
 
