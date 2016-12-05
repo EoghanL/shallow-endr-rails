@@ -19,20 +19,28 @@ class ArtistsController < ApplicationController
   def search
     #if artist !exist then send back results[0..2](subsequent artist create) else render the stored artist from the DB(just do artist show)
     searchTerm = artist_params[:searchTerm]
-    @artistResults = MusicBrainz::Artist.search(searchTerm)
-    byebug
-    # this is where we would search and let them pick the correct result
-    artistId = "f181961b-20f7-459e-89de-920ef03c7ed0"
-    @artist = MusicBrainz::Artist.find(artistId)
-    @albums = []
-    @artist.release_groups.each_with_index { |rel_group,ind|
-      if (rel_group.type == "Album")
-        @songs = @artist.release_groups[ind].releases.first.tracks
-        @albums.push({name: rel_group.title, id: rel_group.id, songs: @songs})
-      end
-    }
-    #@albums is an array of hashes, with keys for title, id and songs (points to an array of MB Recordings)
-    render json: @albums
+    if(Artist.find_by(name: artist_params[:searchTerm]))
+      @artist = Artist.find_by(name: artist_params[:searchTerm])
+      render json: @artist
+    else
+      @artistResults = MusicBrainz::Artist.search(searchTerm)
+      @artistResults = @artistResults.slice(0,3)
+      render json: @artistResults
+    end
+
+    # byebug
+    # # this is where we would search and let them pick the correct result
+    # artistId = "f181961b-20f7-459e-89de-920ef03c7ed0"
+    # @artist = MusicBrainz::Artist.find(artistId)
+    # @albums = []
+    # @artist.release_groups.each_with_index { |rel_group,ind|
+    #   if (rel_group.type == "Album")
+    #     @songs = @artist.release_groups[ind].releases.first.tracks
+    #     @albums.push({name: rel_group.title, id: rel_group.id, songs: @songs})
+    #   end
+    # }
+    # #@albums is an array of hashes, with keys for title, id and songs (points to an array of MB Recordings)
+    # render json: @albums
   end
   # GET /artists
   def index
