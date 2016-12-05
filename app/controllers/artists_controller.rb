@@ -17,19 +17,19 @@ class ArtistsController < ApplicationController
 
 
   def search
-    #if artist !exist then send back results[0..2](subsequent artist create) else render the stored artist from the DB(just do artist show)
-    searchTerm = artist_params[:searchTerm]
-    if(Artist.find_by(name: artist_params[:searchTerm]))
-      @artist = Artist.find_by(name: artist_params[:searchTerm])
+    byebug
+    #Searches for an artist in DB
+    searchTerm = artist_params[:searchTerm].downcase.gsub(' ', '')
+    @artist = Artist.find_by(name: searchTerm)
+    if(@artist)
       render json: @artist
     else
-      @artistResults = MusicBrainz::Artist.search(searchTerm)
+      @artistResults = MusicBrainz::Artist.search(artist_params[:searchTerm])
       @artistResults = @artistResults.slice(0,3)
       render json: @artistResults
     end
-
-
   end
+
   # GET /artists
   def index
     @artists = Artist.all
@@ -44,15 +44,32 @@ class ArtistsController < ApplicationController
 
   # POST /artists
   def create
-    byebug
-    @artist = Artist.find_or_create_by(id: artist_params[:id], name: artist_params[:name])
-    byebug
-
-    if @artist.save
-      render json: @artist, status: :created, location: @artist
-    else
-      render json: @artist.errors, status: :unprocessable_entity
-    end
+    @artist = Artist.create(artist_params)
+    @artistResults = MusicBrainz::Artist.find(artist_params[:mb_id])
+    @albums = []
+    @artistResults.release_groups.each_with_index { |rel_group,ind|
+      if (rel_group.type == "Album")
+        @songs = @artistResults.release_groups[ind].releases.first.tracks
+        @albums.push({name: rel_group.title, id: rel_group.id, songs: @songs})
+      end
+    }
+    #@albums is an array of hashes, with keys for title, id and songs (points to an array of MB Recordings)
+    #for each album, go through each song and create a new song with title and artist_id, return an array of song objects
+    @albums.each { |album|
+      album[:songs].each { |song|
+        @song_info = {
+          name: song.title,
+          rating: 0,
+          mb_id: song.recording_id,
+          album_id: album[:id],
+          artist_id: @artist.id,
+          artist_mb_id: @artist.mb_id
+        }
+        Song.create(@song_info)
+      }
+    }
+    @artistAndAlbums = {artist: @artist, albums: @albums}
+    render json: @artistAndAlbums
   end
 
   # PATCH/PUT /artists/1
