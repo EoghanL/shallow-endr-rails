@@ -17,9 +17,10 @@ class ArtistsController < ApplicationController
 
 
   def search
-    byebug
     #if artist !exist then send back results[0..2](subsequent artist create) else render the stored artist from the DB(just do artist show)
-    searchTerm = 'The Strokes'
+    searchTerm = artist_params[:searchTerm]
+    @artistResults = MusicBrainz::Artist.search(searchTerm)
+    byebug
     # this is where we would search and let them pick the correct result
     artistId = "f181961b-20f7-459e-89de-920ef03c7ed0"
     @artist = MusicBrainz::Artist.find(artistId)
@@ -78,6 +79,6 @@ class ArtistsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def artist_params
-      params.require(:artist).permit(:name)
+      params.require(:artist).permit(:name, :searchTerm)
     end
 end
