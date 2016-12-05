@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   post '/users/login', to: 'users#login'
   post '/users/signup', to: 'users#create'
   get '/callback', to: 'users#callback'
-  get '/auth', to: 'users#authenticate'
+  get '/search', to: 'artists#search'
   resources :songs
   resources :artists
   resources :users
