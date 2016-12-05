@@ -28,19 +28,7 @@ class ArtistsController < ApplicationController
       render json: @artistResults
     end
 
-    # byebug
-    # # this is where we would search and let them pick the correct result
-    # artistId = "f181961b-20f7-459e-89de-920ef03c7ed0"
-    # @artist = MusicBrainz::Artist.find(artistId)
-    # @albums = []
-    # @artist.release_groups.each_with_index { |rel_group,ind|
-    #   if (rel_group.type == "Album")
-    #     @songs = @artist.release_groups[ind].releases.first.tracks
-    #     @albums.push({name: rel_group.title, id: rel_group.id, songs: @songs})
-    #   end
-    # }
-    # #@albums is an array of hashes, with keys for title, id and songs (points to an array of MB Recordings)
-    # render json: @albums
+
   end
   # GET /artists
   def index
@@ -56,7 +44,9 @@ class ArtistsController < ApplicationController
 
   # POST /artists
   def create
-    @artist = Artist.new(artist_params)
+    byebug
+    @artist = Artist.find_or_create_by(id: artist_params[:id], name: artist_params[:name])
+    byebug
 
     if @artist.save
       render json: @artist, status: :created, location: @artist
@@ -87,6 +77,6 @@ class ArtistsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def artist_params
-      params.require(:artist).permit(:name, :searchTerm)
+      params.require(:artist).permit(:name, :searchTerm, :mb_id, :display_name)
     end
 end
