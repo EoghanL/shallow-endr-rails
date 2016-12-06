@@ -43,6 +43,7 @@ class ArtistsController < ApplicationController
     }
     #@albums is an array of hashes, with keys for title, id and songs (points to an array of MB Recordings)
     #for each album, go through each song and create a new song with title and artist_id, return an array of song objects
+    @song_list = []
     @albums.each { |album|
       album[:songs].each { |song|
         @song_info = {
@@ -53,10 +54,10 @@ class ArtistsController < ApplicationController
           artist_id: @artist.id,
           artist_mb_id: @artist.mb_id
         }
-        Song.create(@song_info)
+      @song_list << Song.create(@song_info)
       }
     }
-    @artistAndAlbums = {artist: @artist, albums: @albums}
+    @artistAndAlbums = {artist: @artist, songs: @song_list}
     render json: @artistAndAlbums
   end
 
