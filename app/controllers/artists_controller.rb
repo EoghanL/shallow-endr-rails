@@ -1,31 +1,18 @@
 class ArtistsController < ApplicationController
   before_action :set_artist, only: [:show, :update, :destroy]
-  MusicBrainz.configure do |c|
-    # Application identity (required)
-    c.app_name = "ShallowEndr"
-    c.app_version = "1.0"
-    c.contact = "marc@beldgroup.com"
-
-    # Cache config (optional)
-    c.cache_path = "/tmp/musicbrainz-cache"
-    c.perform_caching = true
-
-    # Querying config (optional)
-    c.query_interval = 1.2 # seconds
-    c.tries_limit = 2
-  end
 
 
   def search
-    byebug
+    mbAdapt = Adapter::MBAdapter.new
     #Searches for an artist in DB
     searchTerm = artist_params[:searchTerm].downcase.gsub(' ', '')
     @artist = Artist.find_by(name: searchTerm)
+    byebug
     if(@artist)
-      render json: @artist
+      render json: { artist: @artist, songs: @artist.songs }
     else
-      @artistResults = MusicBrainz::Artist.search(artist_params[:searchTerm])
-      @artistResults = @artistResults.slice(0,3)
+      @artistResults = mbAdapt.getArtists(artist_params[:searchTerm])
+      byebug
       render json: @artistResults
     end
   end
@@ -44,8 +31,9 @@ class ArtistsController < ApplicationController
 
   # POST /artists
   def create
+    mbAdapt = Adapter::MBAdapter.new
     @artist = Artist.create(artist_params)
-    @artistResults = MusicBrainz::Artist.find(artist_params[:mb_id])
+    @artistResults = mbAdapt.getSpecificArtist(artist_params[:mb_id])
     @albums = []
     @artistResults.release_groups.each_with_index { |rel_group,ind|
       if (rel_group.type == "Album")
