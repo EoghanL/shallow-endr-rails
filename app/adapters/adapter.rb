@@ -1,4 +1,4 @@
-module Adapter
+module †
   class MBAdapter
     def initialize
       MusicBrainz.configure do |c|

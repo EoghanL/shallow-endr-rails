@@ -10,10 +10,12 @@ class ArtistsController < ApplicationController
     if(@artist)
       render json: { artist: @artist, songs: @artist.songs }
     else
-      @partialMatches = Artist.all.select{ |artist| artist.name.include?(searchTerm)}
-      @partialMatchNames = @partialMatches.map {|match| match[:display_name]}
+      #use where here
+      # Artist.where('name like ?', '%#{searchTerm}%')
       @artistResults = mbAdapt.getArtists(artist_params[:searchTerm])
+      @partialMatches = Artist.all.select{ |artist| artist.name.include?(searchTerm)}
       if (@partialMatches)
+        @partialMatchNames = @partialMatches.map {|match| match[:display_name]}
         @artistResults = @artistResults.select {|artist| !@partialMatchNames.include?(artist[:name])}
       end
       #render json: {new_artists: @artistResults, existing_artists: @partialMatches}
