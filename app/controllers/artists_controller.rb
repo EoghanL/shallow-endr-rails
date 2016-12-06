@@ -7,12 +7,16 @@ class ArtistsController < ApplicationController
     #Searches for an artist in DB
     searchTerm = artist_params[:searchTerm].downcase.gsub(' ', '')
     @artist = Artist.find_by(name: searchTerm)
-    byebug
     if(@artist)
       render json: { artist: @artist, songs: @artist.songs }
     else
+      @partialMatches = Artist.all.select{ |artist| artist.name.include?(searchTerm)}
+      @partialMatchNames = @partialMatches.map {|match| match[:display_name]}
       @artistResults = mbAdapt.getArtists(artist_params[:searchTerm])
-      byebug
+      if (@partialMatches)
+        @artistResults = @artistResults.select {|artist| !@partialMatchNames.include?(artist[:name])}
+      end
+      #render json: {new_artists: @artistResults, existing_artists: @partialMatches}
       render json: @artistResults
     end
   end
@@ -34,30 +38,7 @@ class ArtistsController < ApplicationController
     mbAdapt = Adapter::MBAdapter.new
     @artist = Artist.create(artist_params)
     @artistResults = mbAdapt.getSpecificArtist(artist_params[:mb_id])
-    @albums = []
-    @artistResults.release_groups.each_with_index { |rel_group,ind|
-      if (rel_group.type == "Album")
-        @songs = @artistResults.release_groups[ind].releases.first.tracks
-        @albums.push({name: rel_group.title, id: rel_group.id, songs: @songs})
-      end
-    }
-    #@albums is an array of hashes, with keys for title, id and songs (points to an array of MB Recordings)
-    #for each album, go through each song and create a new song with title and artist_id, return an array of song objects
-    @song_list = []
-    @albums.each { |album|
-      album[:songs].each { |song|
-        @song_info = {
-          name: song.title,
-          rating: 0,
-          mb_id: song.recording_id,
-          album_id: album[:id],
-          artist_id: @artist.id,
-          artist_mb_id: @artist.mb_id
-        }
-      @song_list << Song.create(@song_info)
-      }
-    }
-    @artistAndAlbums = {artist: @artist, songs: @song_list}
+    @artistAndAlbums = mbAdapt.getAndAddSongs(@artistResults, @artist)
     render json: @artistAndAlbums
   end
 
