@@ -12,6 +12,7 @@ class ArtistsController < ApplicationController
     else
       #use where here
       # Artist.where('name like ?', '%#{searchTerm}%')
+      byebug
       @artistResults = mbAdapt.getArtists(artist_params[:searchTerm])
       @partialMatches = Artist.all.select{ |artist| artist.name.include?(searchTerm)}
       if (@partialMatches)
@@ -31,7 +32,8 @@ class ArtistsController < ApplicationController
 
   # GET /artists/1
   def show
-    render json: @artist
+    byebug
+    render json: { artist: @artist, songs: @artist.songs }
   end
 
   # POST /artists
