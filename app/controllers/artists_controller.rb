@@ -33,7 +33,7 @@ class ArtistsController < ApplicationController
   # GET /artists/1
   def show
     byebug
-    render json: { artist: @artist, songs: @artist.songs }
+    #render json: { artist: @artist, songs: @artist.songs }
   end
 
   # POST /artists
