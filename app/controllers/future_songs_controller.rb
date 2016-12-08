@@ -37,7 +37,6 @@ class FutureSongsController < ApplicationController
 
   # DELETE /future_songs/1
   def destroy
-    byebug
     @future_song.destroy
     render json: { message: "Song Successfully Removed"}
   end

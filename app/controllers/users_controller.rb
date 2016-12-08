@@ -43,19 +43,7 @@ class UsersController < ApplicationController
     @user.destroy
   end
 
-  def login
-    @user = User.find_by(email: user_params[:email])
-    if @user
-      if @user.authenticate(user_params[:password])
-        jwt_token = Auth.issue({user_id: @user.id})
-        render json: { user_id: @user.id, jwt: jwt_token }
-      else
-        render json: { errors: "Incorrect Password"}
-      end
-    else
-      render json: { errors: "Unrecognized user" }
-    end
-  end
+
 
   def add_song()
     song = Song.find_by(mb_id: user_params[:song_id])
