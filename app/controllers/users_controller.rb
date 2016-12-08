@@ -57,6 +57,13 @@ class UsersController < ApplicationController
     end
   end
 
+  def add_song()
+    song = Song.find_by(mb_id: user_params[:song_id])
+    user = User.find(user_params[:user_id])
+    FutureSong.create(user: user, song: song, name: song.name)
+    render json: { message: "Song Successfully Added to List"}
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
@@ -65,6 +72,6 @@ class UsersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def user_params
-      params.require(:user).permit(:first_name, :last_name, :username, :email, :password)
+      params.require(:user).permit(:first_name, :last_name, :username, :email, :password, :song_id, :user_id)
     end
 end
