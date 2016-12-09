@@ -36,6 +36,7 @@ class ArtistsController < ApplicationController
 
   # POST /artists
   def create
+    byebug
     mbAdapt = Adapter::MBAdapter.new
     @artist = Artist.create(artist_params)
     @artistResults = mbAdapt.getSpecificArtist(artist_params[:mb_id])
