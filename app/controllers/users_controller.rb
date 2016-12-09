@@ -43,18 +43,13 @@ class UsersController < ApplicationController
     @user.destroy
   end
 
-  def login
-    @user = User.find_by(email: user_params[:email])
-    if @user
-      if @user.authenticate(user_params[:password])
-        jwt_token = Auth.issue({user_id: @user.id})
-        render json: { user_id: @user.id, jwt: jwt_token }
-      else
-        render json: { errors: "Incorrect Password"}
-      end
-    else
-      render json: { errors: "Unrecognized user" }
-    end
+
+
+  def add_song()
+    song = Song.find_by(mb_id: user_params[:song_id])
+    user = User.find(user_params[:user_id])
+    FutureSong.create(user: user, song: song, name: song.name)
+    render json: { message: "Song Successfully Added to List"}
   end
 
   private
@@ -65,6 +60,6 @@ class UsersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def user_params
-      params.require(:user).permit(:first_name, :last_name, :username, :email, :password)
+      params.require(:user).permit(:first_name, :last_name, :username, :email, :password, :song_id, :user_id)
     end
 end
