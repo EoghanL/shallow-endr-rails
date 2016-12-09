@@ -15,6 +15,7 @@ class UsersArtistsController < ApplicationController
 
   # POST /users_artists
   def create
+    byebug
     @users_artist = UsersArtist.new(users_artist_params)
 
     if @users_artist.save
