@@ -8,7 +8,12 @@ class ArtistsController < ApplicationController
     searchTerm = artist_params[:searchTerm].downcase.gsub(' ', '')
     @artist = Artist.find_by(name: searchTerm)
     if(@artist)
-      render json: { artist: @artist, songs: @artist.songs }
+      #Need to fix this later
+      user_id = 1
+      #hard coding user_id for now
+      @user = User.find(user_id)
+      @rankings = @user.rankings.find_by(artist_id: @artist.id)
+      render json: { artist: @artist, songs: @artist.songs, rankings: @rankings }
     else
       #use where here
       # Artist.where('name like ?', '%#{searchTerm}%')
@@ -67,6 +72,6 @@ class ArtistsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def artist_params
-      params.require(:artist).permit(:name, :searchTerm, :mb_id, :display_name)
+      params.require(:artist).permit(:name, :searchTerm, :mb_id, :display_name, :id)
     end
 end
