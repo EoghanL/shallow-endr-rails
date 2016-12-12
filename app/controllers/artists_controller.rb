@@ -36,7 +36,10 @@ class ArtistsController < ApplicationController
 
   # GET /artists/1
   def show
-    render json: { artist: @artist, songs: @artist.songs }
+    user_id = 1
+    @user = User.find(user_id)
+    @rankings = @user.rankings.find_by(artist_id: @artist.id)
+    render json: { artist: @artist, songs: @artist.songs, rankings: @rankings }
   end
 
   # POST /artists

@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::API
-  before_action :authenticate 
 
   def current_user
     User.find(Auth.decode(token)[0]["user_id"]) if token.present?
