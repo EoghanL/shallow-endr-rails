@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :users_artists
   resources :future_songs
   get '/login', to: 'sessions#new'
+  get 'users/getUserId', to: 'users#getUserId'
   post '/sessions/login', to: 'sessions#login'
   post '/users/signup', to: 'users#create'
   post '/users/addSong', to: 'users#add_song'
