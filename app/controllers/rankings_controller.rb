@@ -22,7 +22,6 @@ class RankingsController < ApplicationController
     #1.) every song list element is now going to need an artist and song id to send back to ranking control
     #2.) send back localStorage.jwt for the users controller to decode
     #3.) possibly keep a running store of all artist and song combos in state?
-    byebug
     @ranking = Ranking.new(ranking_params)
 
     if @ranking.save
