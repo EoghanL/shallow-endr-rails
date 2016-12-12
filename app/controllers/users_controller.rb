@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :update, :destroy]
+  skip_before_action :authenticate, only: [:create, :getUserId]
   #@wrapper = Discogs::Wrapper.new("ShallowEndr")
 
   #for musicbrainz to get albums: https://musicbrainz.org/ws/2/artist/f181961b-20f7-459e-89de-920ef03c7ed0?inc=release-groups
@@ -43,6 +44,11 @@ class UsersController < ApplicationController
     @user.destroy
   end
 
+  def getUserId
+    @user_id = Auth.decode(params[:user][:jwt])
+    byebug
+    render json: @user_id 
+  end
 
 
   def add_song()
@@ -60,6 +66,6 @@ class UsersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def user_params
-      params.require(:user).permit(:first_name, :last_name, :username, :email, :password, :song_id, :user_id)
+      params.require(:user).permit(:first_name, :last_name, :username, :email, :password, :song_id, :user_id, :jwt)
     end
 end
