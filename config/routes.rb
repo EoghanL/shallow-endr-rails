@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :rankings
   resources :users_artists
   resources :future_songs
   get '/login', to: 'sessions#new'

@@ -41,6 +41,7 @@ class ArtistsController < ApplicationController
     @artist = Artist.create(artist_params)
     @artistResults = mbAdapt.getSpecificArtist(artist_params[:mb_id])
     @artistAndAlbums = mbAdapt.getAndAddSongs(@artistResults, @artist)
+    byebug
     render json: @artistAndAlbums
   end
 

@@ -47,6 +47,7 @@ module Adapter
         @song_list << Song.create(@song_info)
         }
       }
+      #send artist_id back to react for rendering
       {artist: artist, songs: @song_list}
     end
 
