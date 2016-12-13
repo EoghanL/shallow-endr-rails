@@ -3,7 +3,6 @@ class SessionsController < ApplicationController
 
   def login
     @user = User.find_by(email: auth_params[:email])
-    byebug
     if @user
       if @user.authenticate(auth_params[:password])
         jwt_token = Auth.issue({user_id: @user.id})

@@ -22,10 +22,13 @@ class RankingsController < ApplicationController
     #1.) every song list element is now going to need an artist and song id to send back to ranking control
     #2.) send back localStorage.jwt for the users controller to decode
     #3.) possibly keep a running store of all artist and song combos in state?
+    @song = Song.find(ranking_params[:song_id])
+    @newWeight = @song.current_weight + ranking_params[:weight].to_i
+    @song.update(current_weight: @newWeight)
     @ranking = Ranking.new(ranking_params)
-
+    @artistSongs = Artist.find(@ranking[:artist_id]).songs.order('current_weight DESC, name')
     if @ranking.save
-      render json: @ranking, status: :created, location: @ranking
+      render json: { rankings: @ranking, songs: @artistSongs }, status: :created, location: @ranking
     else
       render json: @ranking.errors, status: :unprocessable_entity
     end
@@ -42,7 +45,13 @@ class RankingsController < ApplicationController
 
   # DELETE /rankings/1
   def destroy
+    @ranking_id = @ranking.id
+    @song = Song.find(@ranking[:song_id])
+    @newWeight = @song.current_weight - @ranking[:weight].to_i
+    @song.update(current_weight: @newWeight)
+    @artistSongs = Artist.find(@ranking[:artist_id]).songs.order('current_weight DESC, name')
     @ranking.destroy
+    render json: { songs: @artistSongs, rankings: nil }
   end
 
   private
@@ -53,6 +62,6 @@ class RankingsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def ranking_params
-      params.require(:ranking).permit(:user_id, :song_id, :artist_id)
+      params.require(:ranking).permit(:user_id, :song_id, :artist_id, :weight)
     end
 end

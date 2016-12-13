@@ -1,22 +1,14 @@
 class ArtistsController < ApplicationController
   before_action :set_artist, only: [:show, :update, :destroy]
 
-
   def search
     mbAdapt = Adapter::MBAdapter.new
     #Searches for an artist in DB
     searchTerm = artist_params[:searchTerm].downcase.gsub(' ', '')
     @artist = Artist.find_by(name: searchTerm)
     if(@artist)
-      #Need to fix this later
-      user_id = 1
-      #hard coding user_id for now
-      @user = User.find(user_id)
-      @rankings = @user.rankings.find_by(artist_id: @artist.id)
-      render json: { artist: @artist, songs: @artist.songs, rankings: @rankings }
+      show
     else
-      #use where here
-      # Artist.where('name like ?', '%#{searchTerm}%')
       @artistResults = mbAdapt.getArtists(artist_params[:searchTerm])
       @partialMatches = Artist.all.select{ |artist| artist.name.include?(searchTerm)}
       if (@partialMatches)
@@ -36,20 +28,17 @@ class ArtistsController < ApplicationController
 
   # GET /artists/1
   def show
-    user_id = 1
-    @user = User.find(user_id)
+    @user = current_user
     @rankings = @user.rankings.find_by(artist_id: @artist.id)
-    render json: { artist: @artist, songs: @artist.songs, rankings: @rankings }
+    render json: { artist: @artist, songs: @artist.songs.order('current_weight DESC, name'), rankings: @rankings }
   end
 
   # POST /artists
   def create
-    byebug
     mbAdapt = Adapter::MBAdapter.new
     @artist = Artist.create(artist_params)
     @artistResults = mbAdapt.getSpecificArtist(artist_params[:mb_id])
     @artistAndAlbums = mbAdapt.getAndAddSongs(@artistResults, @artist)
-    byebug
     render json: @artistAndAlbums
   end
 

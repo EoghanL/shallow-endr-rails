@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   post '/future_songs/:id', to: 'future_songs#destroy'
   # get '/callback', to: 'users#callback'
   get '/search', to: 'artists#search'
+  post '/rankings/delete/:id', to: 'rankings#destroy'
   resources :songs
   resources :artists
   resources :users

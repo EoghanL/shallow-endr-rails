@@ -38,11 +38,11 @@ module Adapter
         album[:songs].each { |song|
           @song_info = {
             name: song.title,
-            rating: 0,
             mb_id: song.recording_id,
             album_id: album[:id],
             artist_id: artist.id,
-            artist_mb_id: artist.mb_id
+            artist_mb_id: artist.mb_id,
+            current_weight: 0
           }
         @song_list << Song.create(@song_info)
         }

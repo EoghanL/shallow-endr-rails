@@ -4,7 +4,6 @@ class ApplicationController < ActionController::API
 
 
   def current_user
-    byebug
     User.find(Auth.decode(token)["user_id"]) if token.present?
   end
 
