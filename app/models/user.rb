@@ -6,7 +6,7 @@ class User < ApplicationRecord
   validates :username, presence: true
   validates :email, uniqueness: true
   validates :password, presence: true
-  # validates :confirmation, presence: true
+  validates_confirmation_of :password
 
 
   has_many :future_songs
