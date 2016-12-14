@@ -24,10 +24,10 @@ class RankingsController < ApplicationController
     #3.) possibly keep a running store of all artist and song combos in state?
     @song = Song.find(ranking_params[:song_id])
     @newWeight = @song.current_weight + ranking_params[:weight].to_i
-    @song.update(current_weight: @newWeight)
     @ranking = Ranking.new(ranking_params)
     @artistSongs = Artist.find(@ranking[:artist_id]).songs.order('current_weight DESC, name')
     if @ranking.save
+      @song.update(current_weight: @newWeight)
       render json: { rankings: @ranking, songs: @artistSongs }, status: :created, location: @ranking
     else
       render json: @ranking.errors, status: :unprocessable_entity
