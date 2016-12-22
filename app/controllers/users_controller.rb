@@ -1,11 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :update, :destroy]
   skip_before_action :authenticate, only: [:create, :getUserId]
-  #@wrapper = Discogs::Wrapper.new("ShallowEndr")
-
-  #for musicbrainz to get albums: https://musicbrainz.org/ws/2/artist/f181961b-20f7-459e-89de-920ef03c7ed0?inc=release-groups
-  #find type="Album"
-
 
   # GET /users
   def index
@@ -22,7 +17,6 @@ class UsersController < ApplicationController
   # POST /users
   def create
     @user = User.new(user_params)
-
     if @user.save
       render json: @user, status: :created, location: @user
     else
@@ -45,12 +39,13 @@ class UsersController < ApplicationController
   end
 
   def getUserId
+    byebug
     @user_id = Auth.decode(params[:user][:jwt])
     render json: @user_id
   end
 
 
-  def add_song()
+  def add_song
     song = Song.find_by(mb_id: user_params[:song_id])
     user = User.find(user_params[:user_id])
     FutureSong.create(user: user, song: song, name: song.name)
