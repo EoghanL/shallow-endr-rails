@@ -15,6 +15,10 @@ class ArtistsController < ApplicationController
         @partialMatchNames = @partialMatches.map {|match| match[:display_name]}
         @artistResults = @artistResults.select {|artist| !@partialMatchNames.include?(artist[:name])}
       end
+      @artistResults.map! do |artist|
+        mbAdapt.getSpecificArtist(artist[:mbid]) if mbAdapt.getSpecificArtist(artist[:mbid]).date_begin < DateTime.now
+      end
+      @artistResults.select! { |artist| artist != nil }
       render json: {new_artists: @artistResults, existing_artists: @partialMatches}
     end
   end
