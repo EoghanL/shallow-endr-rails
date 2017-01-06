@@ -40,7 +40,6 @@ class UsersController < ApplicationController
   end
 
   def getUserId
-    byebug
     @user_id = Auth.decode(params[:user][:jwt])
     render json: @user_id
   end
