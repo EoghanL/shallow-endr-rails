@@ -12,8 +12,8 @@ module Adapter
         c.perform_caching = true
 
         # Querying config (optional)
-        c.query_interval = 1.2 # seconds
-        c.tries_limit = 2
+        c.query_interval = 1.5 # seconds
+        c.tries_limit = 3
       end
     end
 
@@ -33,6 +33,7 @@ module Adapter
           @albums.push({name: rel_group.title, id: rel_group.id, songs: @songs})
         end
       }
+      
       @song_list = []
       @albums.each { |album|
         album[:songs].each { |song|
