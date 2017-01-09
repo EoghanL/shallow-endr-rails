@@ -14,7 +14,7 @@ Right now the API is pretty slow when adding new artists so I would recommend ch
 
 You will need to create an account first.  There is not much validation at the moment so using a fake name/email address is fine.
 
-[Demo](https://shallow-endr-rails.herokuapp.com/)
+[Demo](https://shallow-endr-react.herokuapp.com/)
 
 [React Frontend Github Repo](https://github.com/marcimmediato/shallow-endr-react/)
 
