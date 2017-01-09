@@ -15,13 +15,6 @@ class RankingsController < ApplicationController
 
   # POST /rankings
   def create
-    #new rankings need a song_id, user_id, and artist_id
-    #should validate the uniqueness of a user and artist in combo
-    #(can probably skip song_id validations as every song_id is already unique?)
-    #so that users can only rank one song per artist
-    #1.) every song list element is now going to need an artist and song id to send back to ranking control
-    #2.) send back localStorage.jwt for the users controller to decode
-    #3.) possibly keep a running store of all artist and song combos in state?
     @song = Song.find(ranking_params[:song_id])
     @newWeight = @song.current_weight + ranking_params[:weight].to_i
     @ranking = Ranking.new(ranking_params)

@@ -1,24 +1,27 @@
-# README
+**ShallowEndr**
+===========
+ShallowEndr is a crowdsourced music discovery app that helps you figure out the best song to start with from a new artist.  Users of the app will cast a vote for an artists most approachable song.  This will give new listeners a better starting point than by just checking out the artists radio friendly singles.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+We are still working on adding features and increasing UX.  We are also looking into other API providers due to the slow response time.
 
-Things you may want to cover:
+As of now, a user has the ability to vote for one song per artist.  To vote for a song, click on the music icon next to the songs name.  To remove a vote, click on the star next to the songs name.
 
-* Ruby version
+Right now the API is pretty slow when adding new artists so I would recommend checking out one of the existing artists.  Here is a list of a few that are already added:
 
-* System dependencies
+* The Strokes
+* The Killers
+* Jay Z
 
-* Configuration
+You will need to create an account first.  There is not much validation at the moment so using a fake name/email address is fine.
 
-* Database creation
+[Demo](https://shallow-endr-rails.herokuapp.com/)
 
-* Database initialization
+[React Frontend Github Repo](https://github.com/marcimmediato/shallow-endr-react/)
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+To-Do/Planned Features:
+-----------------------
+* Refactor code
+* Add the ability to vote for three songs per artist.
+* Add the ability to downvote songs.
+* Look into different APIs to improve speed.
+* Integrate Spotify player.
