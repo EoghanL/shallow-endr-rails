@@ -17,23 +17,23 @@ module Adapter
       end
     end
 
-    def getArtists(search_term)
+    def get_artists(search_term)
       MusicBrainz::Artist.search(search_term).slice(0,5)
     end
 
-    def getSpecificArtist(mb_id)
+    def get_specific_artist(mb_id)
       MusicBrainz::Artist.find(mb_id)
     end
 
-    def getAndAddSongs(artistResults, artist)
+    def get_and_add_songs(artist_results, artist)
       @albums = []
-      artistResults.release_groups.each_with_index { |rel_group,ind|
+      artist_results.release_groups.each_with_index { |rel_group,ind|
         if (rel_group.type == "Album")
-          @songs = artistResults.release_groups[ind].releases.first.tracks
+          @songs = artist_results.release_groups[ind].releases.first.tracks
           @albums.push({name: rel_group.title, id: rel_group.id, songs: @songs})
         end
       }
-      
+
       @song_list = []
       @albums.each { |album|
         album[:songs].each { |song|

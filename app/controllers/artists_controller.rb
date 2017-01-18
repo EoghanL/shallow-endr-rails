@@ -2,24 +2,24 @@ class ArtistsController < ApplicationController
   before_action :set_artist, only: [:show, :update, :destroy]
 
   def search
-    mbAdapt = Adapter::MBAdapter.new
+    mb_adapt = Adapter::MBAdapter.new
     #Searches for an artist in DB
-    searchTerm = artist_params[:searchTerm].downcase.gsub(' ', '')
-    @artist = Artist.find_by(name: searchTerm)
+    search_term = artist_params[:search_term].downcase.gsub(' ', '')
+    @artist = Artist.find_by(name: search_term)
     if(@artist)
       show
     else
-      @artistResults = mbAdapt.getArtists(artist_params[:searchTerm])
-      @partialMatches = Artist.all.select{ |artist| artist.name.include?(searchTerm)}
-      if (@partialMatches)
-        @partialMatchNames = @partialMatches.map {|match| match[:display_name]}
-        @artistResults = @artistResults.select {|artist| !@partialMatchNames.include?(artist[:name])}
+      @artist_results = mb_adapt.get_artists(artist_params[:search_term])
+      @partial_matches = Artist.all.select{ |artist| artist.name.include?(search_term)}
+      if (@partial_matches)
+        @partial_match_names = @partial_matches.map {|match| match[:display_name]}
+        @artist_results = @artist_results.select {|artist| !@partial_match_names.include?(artist[:name])}
       end
-      @artistResults.map! do |artist|
-        mbAdapt.getSpecificArtist(artist[:mbid]) if mbAdapt.getSpecificArtist(artist[:mbid]).date_begin < DateTime.now
+      @artist_results.map! do |artist|
+        mb_adapt.get_specific_artist(artist[:mbid]) if mb_adapt.get_specific_artist(artist[:mbid]).date_begin < DateTime.now
       end
-      @artistResults.select! { |artist| artist != nil }
-      render json: {new_artists: @artistResults, existing_artists: @partialMatches}
+      @artist_results.select! { |artist| artist != nil }
+      render json: {new_artists: @artist_results, existing_artists: @partial_matches}
     end
   end
 
@@ -39,11 +39,11 @@ class ArtistsController < ApplicationController
 
   # POST /artists
   def create
-    mbAdapt = Adapter::MBAdapter.new
+    mb_adapt = Adapter::MBAdapter.new
     @artist = Artist.create(artist_params)
-    @artistResults = mbAdapt.getSpecificArtist(artist_params[:mb_id])
-    @artistAndAlbums = mbAdapt.getAndAddSongs(@artistResults, @artist)
-    render json: @artistAndAlbums
+    @artist_results = mb_adapt.get_specific_artist(artist_params[:mb_id])
+    @artist_and_albums = mb_adapt.get_and_add_songs(@artist_results, @artist)
+    render json: @artist_and_albums
   end
 
   # PATCH/PUT /artists/1
@@ -68,6 +68,6 @@ class ArtistsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def artist_params
-      params.require(:artist).permit(:name, :searchTerm, :mb_id, :display_name, :id)
+      params.require(:artist).permit(:name, :search_term, :mb_id, :display_name, :id)
     end
 end

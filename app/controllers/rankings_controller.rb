@@ -16,12 +16,12 @@ class RankingsController < ApplicationController
   # POST /rankings
   def create
     @song = Song.find(ranking_params[:song_id])
-    @newWeight = @song.current_weight + ranking_params[:weight].to_i
+    @new_weight = @song.current_weight + ranking_params[:weight].to_i
     @ranking = Ranking.new(ranking_params)
-    @artistSongs = Artist.find(@ranking[:artist_id]).songs.order('current_weight DESC, name')
+    @artist_songs = Artist.find(@ranking[:artist_id]).songs.order('current_weight DESC, name')
     if @ranking.save
-      @song.update(current_weight: @newWeight)
-      render json: { rankings: @ranking, songs: @artistSongs }, status: :created, location: @ranking
+      @song.update(current_weight: @new_weight)
+      render json: { rankings: @ranking, songs: @artist_songs }, status: :created, location: @ranking
     else
       render json: @ranking.errors, status: :unprocessable_entity
     end
@@ -40,11 +40,11 @@ class RankingsController < ApplicationController
   def destroy
     @ranking_id = @ranking.id
     @song = Song.find(@ranking[:song_id])
-    @newWeight = @song.current_weight - @ranking[:weight].to_i
-    @song.update(current_weight: @newWeight)
-    @artistSongs = Artist.find(@ranking[:artist_id]).songs.order('current_weight DESC, name')
+    @new_weight = @song.current_weight - @ranking[:weight].to_i
+    @song.update(current_weight: @new_weight)
+    @artist_songs = Artist.find(@ranking[:artist_id]).songs.order('current_weight DESC, name')
     @ranking.destroy
-    render json: { songs: @artistSongs, rankings: nil }
+    render json: { songs: @artist_songs, rankings: nil }
   end
 
   private
